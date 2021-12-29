@@ -1,0 +1,42 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+    <script type="text/javascript">
+        $(document).ready(function ()
+         {
+
+            
+            $("#boton").click(function(){
+            
+                    $.getJSON("/Home/ListaPersonasJson", function(datos) {
+
+                        console.log(datos);
+                    
+                         for( let i=0; i <datos.length; i++) {
+                
+                    $("ul").append("<li>"+ datos[i].nombre +"</li>"+"<li>"+ datos[i].apellidos +"</li");
+                         }
+            });
+        })
+        })
+    </script>
+<ul>
+        
+    @foreach (var persona in ViewBag.ListaPersonas)
+
+    { 
+        <li>
+            @persona.Nombre @persona.Apellidos
+        </li>
+    
+    }
+
+     </ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  table>
+
+    <input type="button" value="aceptar" id ="boton"/>

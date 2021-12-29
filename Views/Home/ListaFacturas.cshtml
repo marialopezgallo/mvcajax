@@ -1,0 +1,197 @@
+﻿@{
+    ViewData["Title"] = "home/ListaFacturas";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        BuscarTodos();
+
+
+        $("#formularioinsertar").hide();
+        $("#detalle").hide();
+        $("#editar").hide();
+
+
+
+        $("#botonNuevo").click(function () {
+            $("#listado").hide();
+            $("#formularioinsertar").show();
+        })
+
+
+        $("#botonInsertar").click(function () {
+            var factura = {};
+            factura.numero = $("#numero").val();
+            factura.concepto = $("#concepto").val();
+            factura.importe = $("#importe").val();
+            console.log(factura);
+            // muy manual con jquery y ajax para enviar datos al servidor en json
+
+            $.ajax({
+                url: "/api/facturas",
+                type: "POST",
+                data: JSON.stringify(factura),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function (response) {
+                    console.dir(response);
+                },
+                success: function (response) {
+
+                    $("#listado").show();
+                    $("#formularioinsertar").hide();
+                    $("#mitabla").empty();
+                    BuscarTodos();
+                }
+            });
+        })
+    });
+
+    function listado() {
+        $("#listado").show();
+        $("#detalle").hide();
+    }
+
+    function borrar(numero) {
+        $.ajax({
+            url: "/api/facturas/" + numero,
+            type: "DELETE",
+            contentType: "application/json; charset=utf-8",
+            error: function (response) {
+                alert(response.responseText);
+            },
+            success: function (response) {
+                $("#mitabla").empty();
+                BuscarTodos();
+            }
+        });
+
+    }
+
+    function detalle(numero) {
+
+        $.getJSON("/api/facturas/" + numero, function (factura) {
+            $("#detalle").empty().append(`<p>${factura.numero}</p>
+                                        <p>${factura.concepto}</p>
+                                        <p>${factura.importe}</p>
+
+        <p><input type="button" value="volver" onclick="listado()" />
+        </p>`);
+
+        $("#detalle").show();
+        $("#listado").hide();
+
+        })
+    }
+
+    function BuscarTodos() {
+        $.getJSON("/api/facturas", function (datos) {
+
+
+            for (let i = 0; i < datos.length; i++) {
+                $("#mitabla").append(`<tr>
+                                        <td>${datos[i].numero}</td>
+                                        <td>${datos[i].concepto}</td>
+                                        <td>${datos[i].importe}</td>
+                                        <td><a href=""onclick="borrar(${datos[i].numero});return false;">borrar</a>
+                                         <td><a href=""onclick="detalle(${datos[i].numero});return false;">detalle</a>
+                                        <td><a href="" onclick="editar(${datos[i].numero});return false;">editar</a>
+                                        </tr>`);
+                                        
+                                        
+                
+            }
+
+        })
+    }
+    function editar(numero) {
+        $("#listado").hide();
+        $("#editar").show();
+
+        $.getJSON("/api/facturas/" + numero, function (factura) {
+
+
+            $("#numeroeditar").val(factura.numero);
+            $("#conceptoeditar").val(factura.concepto);
+            $("#importeeditar").val(factura.importe);
+
+        });
+
+    }
+
+
+
+    function salvar() {
+        let numero = $("#numeroeditar").val();
+        let factura = {};
+
+        factura.numero = numero;
+        factura.concepto = $("#conceptoeditar").val();
+        factura.importe = $("#importeeditar").val();
+
+        $.ajax({
+            url: "/api/facturas/" + numero,
+            type: "PUT",
+            data: JSON.stringify(factura),
+            contentType: "application/json; charset=utf-8",
+
+            error: function (response) {
+                alert(response.responseText);
+            },
+            success: function (response) {
+                BuscarTodos();
+                $("#listado").show();
+                $("#editar").hide();
+            }
+
+        })
+    }
+
+</script>
+<div id="listado">
+    <table id="mitabla">
+        <tr>
+            <th>Numero</th>
+            <th>Concepto</th>
+            <th>Importe</th>
+        </tr>
+    </table>
+
+    <input type="button" value="insertar" id="botonNuevo" />
+</div>
+<div id="formularioinsertar">
+    <form>
+
+        <p>
+            Numero<input type="text" name="numero" id="numero" />
+        </p>
+        <p>
+            Concepto<input type="text" name="concepto" id="concepto" />
+        </p>
+        <p>
+            Importe<input type="text" name="importe" id="importe" />
+        </p>
+        <p>
+            <input type="button" id="botonInsertar" value="aceptar" />
+        </p>
+    </form>
+</div>
+<div id="detalle">
+</div>
+<div id="editar">
+    <form>
+        <p>
+            Numero<input type="text" name="numero" id="numeroeditar" />
+        </p>
+        <p>
+            Concepto<input type="text" name="concepto" id="conceptoeditar" />
+        </p>
+        <p>
+            Importe<input type="text" name="importe" id="importeeditar" />
+        </p>
+        <p>
+            <input type="button" id="botoneditar" value="aceptar" onclick="salvar()" />
+        </p>
+    </form>
+</div>

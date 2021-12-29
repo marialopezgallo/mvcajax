@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+    <script type="text/javascript">
+        $(document).ready(function ()
+         {
+
+             /*
+            
+             $.get("/Cliente/ListaClientes", function(datos) {
+
+                        console.log(datos);
+                    
+                         for( let i=0; i <datos.length; i++) {
+                
+                    $("ul").append("<li>"+ datos[i].dni +"</li>"+"<li>"+ datos[i].nombre +"</li>"+"<li>"+ datos[i].apellidos +"</li");
+                         }
+            });
+               
+               */
+
+
+
+        })
+         
+    
+    </script>
+<ul>
+        
+    @foreach (var cliente in ViewBag.ListaClientes)
+
+    { 
+        <li>
+            @cliente.Dni @cliente.Nombre @cliente.Apellidos 
+           <form action="/Cliente/Borrar">
+           <input type="hidden" name="dni" value="@cliente.Dni"/>
+           <input type="submit" value="borrar" id="Borrar"/>
+           </form>
+           <a href="/Cliente/borrar?Dni=@cliente.Dni">borrar</a>
+        </li>
+        
+    }
+
+     </ul>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  table>
+<a href="/Cliente/FormularioInsertar">Añadir nuevo </a>
+    

@@ -1,0 +1,68 @@
+@{
+    ViewData["Title"] = "Home/IndexCliente";
+}
+
+<head>
+    <style> table, th, td 
+        {
+            border: 2px solid rgb(145, 68, 68);
+            border-collapse: separate;
+            border-spacing: 15px;
+            border-collapse: collapse;
+            text-align: center;
+        }</style>
+</head>
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+
+    <script type="text/javascript">
+        $(document).ready(function ()
+         {
+
+            
+        
+                    $.get("Cliente/ListadeClientes", function(texto) {
+                    
+                    $("#mitabla").append("<tr><td>"+ texto +"</td></tr>");
+            });
+        })
+        
+    </script>
+
+    <table id="mitabla">
+
+        <tr>   
+            <th>    CLIENTES   </th>
+        </tr>
+ 
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>Dni</th>
+            <th>Nombre</th>
+            <th>Apellidos</th>
+
+            <th> </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var cliente in ViewBag.listaclientes)
+        {
+            <tr>
+                <td>@cliente.Dni</td>
+                <td>@cliente.Nombre</td>
+                <td>@cliente.Apellidos</td>
+
+            </tr>
+        }
+    </tbody>
+
+</table>
+
+
+
+

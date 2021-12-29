@@ -1,0 +1,118 @@
+﻿@{
+    ViewData["Title"] = "home/ListaLibros";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+         BuscarTodos();
+        $("#formularioinsertar").hide();
+
+
+        $("#botonNuevo").click(function () 
+        {
+            $("#listado").hide();
+            $("#formularioinsertar").show();
+        })
+
+
+        $("#botonInsertar").click(function () {
+            var libro = {};
+            libro.numero = $("#numero").val();
+            libro.titulo = $("#titulo").val();
+            libro.autor = $("#autor").val();
+            
+            console.log(libro);
+            // muy manual con jquery y ajax para enviar datos al servidor en json
+
+            $.ajax({
+                url: "/api/libros",
+                type: "POST",
+                data: JSON.stringify(libro),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function (response) 
+                {
+                    console.dir(response);
+                },
+                success: function (response) {
+               
+                    $("#listado").show();
+                    $("#formularioinsertar").hide();
+                    $("#mitabla").empty();
+                    BuscarTodos();
+                }
+            });
+        })
+    });
+
+
+
+    function borrar(numero) {
+        $.ajax({
+            url: "/api/libros/" + numero,
+            type: "DELETE",
+            contentType: "application/json; charset=utf-8",
+            error: function (response) 
+            {
+                alert(response.responseText);
+            },
+            success: function (response) {
+                $("#mitabla").empty();
+                BuscarTodos();
+            }
+        });
+
+    }
+
+
+  
+    function BuscarTodos() 
+    {
+        $.getJSON("/api/Libros", function (datos) 
+        {
+
+
+            for (let i = 0; i < datos.length; i++) 
+            {
+                $("#mitabla").append(`<tr>
+                                        <td>${datos[i].numero}</td>
+                                        <td>${datos[i].titulo}</td>
+                                        <td>${datos[i].autor}</td>
+                                        <td><a href=""onclick="borrar(${datos[i].numero});return false;">borrar</a>
+                                        </tr>`
+                                    );
+            }
+
+        })
+    }
+    
+
+</script>
+<div id="listado">
+    <table id="mitabla">
+        <tr>
+            <th>Numero</th>
+            <th>Titulo</th>
+            <th>Autor</th>
+        </tr>
+    </table>
+
+    <input type="button" value="insertar" id="botonNuevo" />
+</div>
+<div id="formularioinsertar">
+    <form>
+
+        <p>
+            Numero<input type="text" name="numero" id="numero" />
+        <p>
+            Titulo<input type="text" name="titulo" id="titulo" />
+        </p>
+        <p>
+            Autor<input type="text" name="autor" id="autor" />
+        </p>
+        <p>
+            <input type="button" id="botonInsertar" value="aceptar" />
+        </p>
+    </form>
+</div>
